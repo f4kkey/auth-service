@@ -1,6 +1,8 @@
 services:
 
   auth-service:
+    container_name: auth-service
+
     build: 
       context: ./auth
       dockerfile: Dockerfile
@@ -9,8 +11,6 @@ services:
       - DB_URL=jdbc:mariadb://auth-db:3306/auth
       - DB_USERNAME=root
       - DB_PASSWORD=root
-    ports:
-      - "8079:8080"
     depends_on:
       auth-db: 
         condition: service_healthy
