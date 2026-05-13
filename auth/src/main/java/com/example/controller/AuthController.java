@@ -92,7 +92,6 @@ public class AuthController {
                 String password = json.getString("password");
 
                 String token = authService.login(username, password);
-                System.out.println("Jwt token: " + token);
 
                 if (token == null) {
 

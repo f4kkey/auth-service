@@ -17,21 +17,21 @@ public class AuthService {
         }
         String hashed = PasswordUtil.hash(password);
 
-        userDAO.createUser(username, hashed);
+        userDAO.createUser(username, hashed, "USER");
     }
 
     public String login(String username, String password) throws Exception {
 
-        String hash = userDAO.findPasswordByUsername(username);
+        User user = userDAO.findUserByUsername(username);
 
-        if (hash == null) {
+        if (user == null) {
             return null;
         }
-        boolean ok = PasswordUtil.verify(password, hash);
+        boolean ok = PasswordUtil.verify(password, user.getPassword());
         if (!ok) {
             return null;
         }
 
-        return JwtUtil.generateToken(username);
+        return JwtUtil.generateToken(user);
     }
 }

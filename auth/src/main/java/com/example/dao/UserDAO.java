@@ -1,24 +1,28 @@
 package com.example.dao;
 
-import com.example.util.DBconnection;
 import com.example.model.User;
+import com.example.util.DBconnection;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 public class UserDAO {
 
     public void createUser(
             String username,
-            String password) throws Exception {
+            String password,
+            String role) throws Exception {
 
         Connection conn = DBconnection.getConnection();
 
-        String sql = "INSERT INTO users(username,password) VALUES (?,?)";
+        String sql = "INSERT INTO users(username,password, role) VALUES (?,?,?)";
 
         PreparedStatement stmt = conn.prepareStatement(sql);
 
         stmt.setString(1, username);
         stmt.setString(2, password);
+        stmt.setString(3, role);
 
         stmt.executeUpdate();
 
@@ -45,6 +49,7 @@ public class UserDAO {
             user.setId(rs.getLong("id"));
             user.setUsername(rs.getString("username"));
             user.setPassword(rs.getString("password"));
+            user.setRole(rs.getString("role"));
         }
 
         rs.close();

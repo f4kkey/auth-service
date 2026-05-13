@@ -1,5 +1,6 @@
 package com.example.util;
 
+import com.example.model.User;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
@@ -14,11 +15,13 @@ public class JwtUtil {
                 "MY_SUPER_SECRET_KEY_123456789_MY_SUPER_SECRET_KEY_123456789".getBytes(StandardCharsets.UTF_8)
         );
 
-        public static String generateToken(String username) {
+        public static String generateToken(User user) {
                 return Jwts.builder()
-                        .subject(username)
+                        .subject(user.getUsername())
                         .issuer("my-auth-issuer")
                         .issuedAt(new Date())
+                        .claim("id", user.getId())
+                        .claim("role", user.getRole())
                         .expiration(new Date(System.currentTimeMillis() + 86400000))
                         .signWith(KEY, Jwts.SIG.HS256)
                         .compact();
