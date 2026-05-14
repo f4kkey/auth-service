@@ -27,7 +27,7 @@ public class AuthService {
 
         User user = userDAO.findUserByUsername(username);
         String jsonBody = "{\"id\": " + user.getId() + ", \"name\": \"" + username
-                + "\", \"balance\": 1000000, \"role\": \"USER\"}";
+                + "\", \"role\": \"USER\"}";
         String url = System.getenv("SERVER_BANK_URL") + "/user/create";
         String timestamp = String.valueOf(System.currentTimeMillis());
         String signature = HmacUtil.sign(timestamp, jsonBody);
