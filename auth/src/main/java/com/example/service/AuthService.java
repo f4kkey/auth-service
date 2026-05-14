@@ -1,7 +1,13 @@
 package com.example.service;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+
 import com.example.dao.UserDAO;
 import com.example.model.User;
+import com.example.util.HmacUtil;
 import com.example.util.JwtUtil;
 import com.example.util.PasswordUtil;
 
@@ -18,6 +24,26 @@ public class AuthService {
         String hashed = PasswordUtil.hash(password);
 
         userDAO.createUser(username, hashed, "USER");
+
+        User user = userDAO.findUserByUsername(username);
+        String jsonBody = "{\"id\": " + user.getId() + ", \"name\": \"" + username
+                + "\", \"balance\": 1000000, \"role\": \"USER\"}";
+        String url = System.getenv("SERVER_BANK_URL") + "/user/create";
+        String timestamp = String.valueOf(System.currentTimeMillis());
+        String signature = HmacUtil.sign(timestamp, jsonBody);
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
+                .header("Accept", "application/json")
+                .header("X-Internal-Signature", signature)
+                .header("X-Internal-Timestamp", timestamp)
+                .build();
+        HttpClient client = HttpClient.newHttpClient();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() < 200 || response.statusCode() >= 300) {
+            throw new Exception("Failed to create bank account" + response.body());
+        }
     }
 
     public String login(String username, String password) throws Exception {

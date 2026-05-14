@@ -1,3 +1,4 @@
+-- Active: 1778742309031@@127.0.0.1@33062@auth
 USE auth;
 
 DROP TABLE if EXISTS users;
@@ -10,3 +11,7 @@ CREATE TABLE users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+
+INSERT INTO
+    users (id, username, password, role)
+VALUES (1, 'admin', '1', 'ADMIN');

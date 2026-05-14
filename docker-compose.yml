@@ -11,6 +11,8 @@ services:
       - DB_URL=jdbc:mariadb://auth-db:3306/auth
       - DB_USERNAME=root
       - DB_PASSWORD=root
+      - SERVER_BANK_URL=http://bank-nginx
+      - INTERNAL_API_SECRET=b8f2a9c1-4e3d-4a7b-9f1e-6d5c8a2b3e4f
     depends_on:
       auth-db: 
         condition: service_healthy
