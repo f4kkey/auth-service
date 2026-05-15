@@ -15,7 +15,7 @@ public class AuthService {
 
     private final UserDAO userDAO = new UserDAO();
 
-    public void register(String username, String password) throws Exception {
+    public void register(String username, String password, String role) throws Exception {
 
         User existing = userDAO.findUserByUsername(username);
         if (existing != null) {
@@ -23,7 +23,9 @@ public class AuthService {
         }
         String hashed = PasswordUtil.hash(password);
 
-        userDAO.createUser(username, hashed, "USER");
+        userDAO.createUser(username, hashed, role);
+
+        System.out.println("User: " + username + " registered successfully with role: " + role);
 
         User user = userDAO.findUserByUsername(username);
         String jsonBody = "{\"id\": " + user.getId() + ", \"name\": \"" + username
@@ -57,7 +59,7 @@ public class AuthService {
         if (!ok) {
             return null;
         }
-
+        System.out.println("User: " + username + " ID: " + user.getId() + " logged in successfully");
         return JwtUtil.generateToken(user);
     }
 }

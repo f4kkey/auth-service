@@ -13,7 +13,6 @@ public class UserDAO {
             String username,
             String password,
             String role) throws Exception {
-
         Connection conn = DBconnection.getConnection();
 
         String sql = "INSERT INTO users(username,password, role) VALUES (?,?,?)";

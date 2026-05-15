@@ -8,6 +8,8 @@ services:
       dockerfile: Dockerfile
 
     environment:
+      - ADMIN_USERNAME=admin
+      - ADMIN_PASSWORD=1
       - DB_URL=jdbc:mariadb://auth-db:3306/auth
       - DB_USERNAME=root
       - DB_PASSWORD=root

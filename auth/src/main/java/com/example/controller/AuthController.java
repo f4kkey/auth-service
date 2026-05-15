@@ -41,7 +41,7 @@ public class AuthController {
 
                 String password = json.getString("password");
 
-                authService.register(username, password);
+                authService.register(username, password, "USER");
 
                 JSONObject response = new JSONObject();
 
