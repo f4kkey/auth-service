@@ -44,7 +44,7 @@ public class AuthService {
         HttpClient client = HttpClient.newHttpClient();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         if (response.statusCode() < 200 || response.statusCode() >= 300) {
-            throw new Exception("Failed to create bank account" + response.body());
+            throw new Exception("Failed to create bank account");
         }
     }
 
