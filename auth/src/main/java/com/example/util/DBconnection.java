@@ -1,16 +1,52 @@
-package com.example.util;
+package com.example.util; // Fixed package name
+
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
+import java.sql.SQLException;
 
 public class DBconnection {
-    private static final String URL = System.getenv("DB_URL");
 
-    private static final String USER = System.getenv("DB_USERNAME");
+    private static final HikariDataSource dataSource;
 
-    private static final String PASSWORD = System.getenv("DB_PASSWORD");
+    static {
+        String url = System.getenv("DB_URL");
+        String user = System.getenv("DB_USERNAME");
+        String password = System.getenv("DB_PASSWORD");
 
-    public static Connection getConnection() throws Exception {
-        return DriverManager.getConnection(URL, USER, PASSWORD);
+        if (url == null || user == null || password == null) {
+            throw new IllegalStateException(
+                    "DB credentials missing. Please set MARIADB_URL, MARIADB_USER, and MARIADB_PASSWORD environment variables.");
+        }
+
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl(url);
+        config.setUsername(user);
+        config.setPassword(password);
+
+        config.setConnectionTimeout(5000);
+
+        config.setMaximumPoolSize(60);
+
+        config.setMaxLifetime(600000);
+        config.setIdleTimeout(60000);
+        config.setAutoCommit(true);
+
+        dataSource = new HikariDataSource(config);
+    }
+
+    public static Connection getConnection() throws SQLException {
+        return dataSource.getConnection();
+    }
+
+    /**
+     * Call this inside your application's shutdown hook
+     * to safely close the pool and prevent memory leaks.
+     */
+    public static void shutdown() {
+        if (dataSource != null) {
+            dataSource.close();
+        }
     }
 }
