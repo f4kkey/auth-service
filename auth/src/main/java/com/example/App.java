@@ -5,6 +5,7 @@ import com.example.controller.AuthController;
 import com.example.service.AuthService;
 
 import java.net.InetSocketAddress;
+import java.util.concurrent.Executors;
 
 public class App {
     public static void initCoreUser() throws Exception {
@@ -47,7 +48,15 @@ public class App {
         server.createContext("/login", new AuthController.LoginHandler());
         // server.createContext("/verify", new AuthController.VerifyHandler());
 
-        server.setExecutor(null);
+        // One virtual thread per request — parks (not blocks) on I/O,
+        // so thousands of concurrent requests share a small OS-thread pool.
+        server.setExecutor(Executors.newVirtualThreadPerTaskExecutor());
+
+        // Cleanly drain the bcrypt executor on shutdown
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            AuthService.shutdownBcryptExecutor();
+            System.out.println("Auth Service shut down cleanly");
+        }));
 
         Thread.sleep(5000);
         initCoreUser();
