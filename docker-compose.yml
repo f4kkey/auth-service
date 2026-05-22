@@ -37,5 +37,35 @@ services:
       retries: 10
       start_period: 5s
 
+  auth-php-gateway:
+    build:
+      context: ./php
+      dockerfile: Dockerfile
+    container_name: auth-php-gateway
+    environment:
+      - JAVA_HOST=auth-service
+      - JAVA_PORT=12345
+      - REDIS_HOST=auth-redis
+      - REDIS_PORT=6379
+      - INTERNAL_API_SECRET=b8f2a9c1-4e3d-4a7b-9f1e-6d5c8a2b3e4f
+      - KONG_API_KEY=d4f8e2a1-7b3c-4f9e-a6d5-8c1b2e3f4a5d
+    depends_on:
+      auth-service:
+        condition: service_started
+
+  auth-nginx:
+    image: nginx:alpine
+    container_name: auth-nginx
+    volumes:
+      - ./php:/usr/src/myapp
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - auth-php-gateway
+
+  auth-redis:
+    image: redis
+    container_name: auth-redis
+    restart: always
+
 volumes:
   auth_db_data:
